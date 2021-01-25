@@ -1,0 +1,96 @@
+class Solution {
+    
+    
+    // 本题的节点可以重复访问。我们要求当重复访问一个节点时，这个
+    // 节点的状态必须没有出现过。比如说我们第一次在拿到了钥匙b和c的情况下
+    // 访问了节点（x,y)，这是可以的.那么当我们下一次访问（x,y）这个点的时候，钥匙的状态
+    // 必须是不一样的。否则就是无意义的访问。由于最多只有6个钥匙，我们可以用
+    // 一个长度为6的二进制数来表示钥匙的状态。例如010000 代表我们拿到了钥匙b。
+    // 010100 代表我们拿到了钥匙b和d. 采用HashSet<String> 去重复！
+    //  StringBuilder sb = new StringBuilder();
+    //  sb.append(s[0]).append('*').append(s[1]).append('*').append(0);
+    //  set.add(sb.toString());
+    
+    int min = Integer.MAX_VALUE;
+    int[][] dir = {{1, 0},{-1, 0},{0, 1}, {0, -1}};
+    public int shortestPathAllKeys(String[] grid) {
+        
+        int m = grid.length;
+        int n = grid[0].length();
+        char[][] A = new char[m][n];
+        
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                A[i][j] = grid[i].charAt(j);
+            }
+        }
+        
+        int[] s = new int[2];
+        int cnt = 0;
+        for(int i = 0; i< m; i++){
+            for(int j = 0; j< n; j++){
+                if(A[i][j] == '@'){
+                    s = new int[]{i, j};
+                }
+                if('a' <= A[i][j] && A[i][j] <= 'z'){
+                    cnt++;
+                }
+            }
+        }
+        //System.out.println("cnt = " + cnt);
+        
+        HashSet<String> set = new HashSet<>();
+         
+        
+         // 最后的状态是拿到了所有钥匙，也就是二进制数的各位全是1
+        int finalk = (int)Math.pow(2, cnt) - 1;
+        Queue<int[]> q = new LinkedList<>();
+        q.offer(new int[]{s[0], s[1], 0});
+        StringBuilder sb = new StringBuilder();
+        sb.append(s[0]).append('*').append(s[1]).append('*').append(0);
+        set.add(sb.toString());
+        
+        
+        int step = 0;
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i = 0; i < size; i++){
+                int[] a = q.poll();
+                int x0 = a[0];
+                int y0 = a[1];
+                int k = a[2];
+                if(k == finalk) return step;
+                
+                for(int[] d : dir){
+                    int x = x0 + d[0];
+                    int y = y0 + d[1];
+                    
+                    
+                    if(x< 0 || x >= m || y < 0 || y >= n || A[x][y] == '#') continue;
+                    if('A' <= A[x][y] && A[x][y] <= 'Z'){
+                        
+                        if( ((k >> (A[x][y] - 'A'))&1) == 0) continue;
+                    }
+                    
+                    int newk = k;
+                    if('a' <= A[x][y] && A[x][y] <= 'z'){
+                        newk = (k | (1 << (A[x][y] - 'a')));
+                    }
+                    
+                    sb = new StringBuilder();
+                    sb.append(x).append('*').append(y).append('*').append(newk);
+                    String str= sb.toString();
+                    if(set.contains(str)) continue;
+                    
+                    q.offer(new int[]{x, y, newk});
+                    set.add(str);
+                    
+                }
+            }
+            step++;
+        }
+        
+        return -1;        
+    }
+
+}
