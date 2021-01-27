@@ -1,0 +1,39 @@
+class Solution {
+    public int shortestPathLength(int[][] graph) {
+        int n = graph.length;
+        int endState = 0;
+        for (int i = 0; i < n; i++) {
+            endState |= (1 << i);//should be 1<<i!!!!!!!!
+        }
+        
+        Queue<int[]> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[n][1<<n];
+        for (int i = 0; i < n; i++) {
+            queue.offer(new int[]{i, 1<<i});
+            visited[i][1<<i] = true;
+        }
+        //multiple starting point
+        int step = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                int[] cur = queue.poll();
+                int curNode = cur[0];
+                int state = cur[1];
+                if (state == endState) {
+                    return step;
+                }
+                for (int neig: graph[curNode]) {
+                    int newState = (state |( 1 << neig));
+                    if (visited[neig][newState]) {
+                        continue;
+                    }
+                    queue.offer(new int[]{neig, newState});
+                    visited[neig][newState] = true;
+                }
+            }
+            step++;
+        }
+        return -1;
+    }
+}
