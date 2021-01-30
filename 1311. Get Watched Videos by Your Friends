@@ -1,0 +1,66 @@
+class Solution {
+    public List<String> watchedVideosByFriends(List<List<String>> watchedVideos, int[][] friends, int id, int level) {
+        Queue<Integer> queue = new LinkedList();    
+        int current = 0;
+        Set<Integer> visited = new HashSet();
+
+        queue.add(id);
+        visited.add(id);
+    
+        while (current < level) {
+            int currentSize = queue.size();
+            while (currentSize > 0) {
+                Integer currentId = queue.poll();
+
+                int [] currentFriends = friends[currentId];
+                for (int i = 0; i < currentFriends.length; i++) {
+                    if (!visited.contains(currentFriends[i])) {
+                        queue.add(currentFriends[i]);
+                        visited.add(currentFriends[i]);
+                    }
+                }
+                currentSize--;
+            }
+            current++;
+        }
+
+        HashMap<String, Integer> frequency = new HashMap();
+        int max = 0;
+
+        while (!queue.isEmpty()) {
+            int currentId = queue.poll();
+            List<String> videos = watchedVideos.get(currentId);
+
+            for (String video : videos) {
+                int currentValue = frequency.getOrDefault(video, 0);
+                currentValue++;
+                frequency.put(video, currentValue);
+                if (max < currentValue) {
+                    max = currentValue;
+                }
+            }
+        }
+
+        List<String> result = new ArrayList();
+        ArrayList<ArrayList<String>> arr = new ArrayList(max+1);
+
+        for (int i = 0; i < max+1; i++) {
+            arr.add(new ArrayList<>());
+        }
+
+        for (Map.Entry<String, Integer> entry : frequency.entrySet()) {
+            ArrayList<String> currentList = arr.get(entry.getValue());
+            currentList.add(entry.getKey());
+        }
+
+        for (int i = 0; i < max+1; i++) {
+            ArrayList<String> currentList = arr.get(i);
+            if (!currentList.isEmpty()) {
+                Collections.sort(currentList);
+                result.addAll(currentList);
+            }
+        }
+
+        return result;        
+    }
+}
