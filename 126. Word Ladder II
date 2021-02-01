@@ -1,96 +1,72 @@
 class Solution {
-    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        Set<String> set = new HashSet<>();
-        for (String s : wordList) {
-            set.add(s);
-        }
-        if (!set.contains(endWord)) return 0;
-        Queue<String> queue = new LinkedList<>();
-        queue.offer(beginWord);
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        List<List<String>> result = new ArrayList<>();
+        Set<String> dict = new HashSet<>(wordList);
+        if( !dict.contains(endWord))
+            return result;
         
-        int step = 1;
-        while (!queue.isEmpty()) {
-            int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                String s = queue.poll();
-                char[] arr = s.toCharArray();
-                for (int j = 0; j < arr.length; j++) {
-                    char original = arr[j];
-                    for (char c = 'a'; c <= 'z'; c++) {
-                        if (c == arr[j]){
-                            continue;
-                        }
-                        arr[j] = c;
-                        String test = String.valueOf(arr);
-                        if (test.equals(endWord)) {
-                            return step + 1;
-                        }
-                        if (set.contains(test)) {
-                            queue.offer(test);
-                            set.remove(test);//remove the unecessary Strings.
-                        }
-                    }
-                    arr[j] = original;
-                }
-            }
-            step++;
-        }
-        return 0;
+        Map<String, List<String>> map = new HashMap<>();
+
+        // 11ms - 100%
+        Set<String> set1 = new HashSet<>(Arrays.asList(beginWord));
+        Set<String> set2 = new HashSet<>(Arrays.asList(endWord));
+        if(!searchMap(set1, set2, dict, map, true))
+            return result;
+        
+        List<String> list = new ArrayList<>();
+        list.add(beginWord);
+        searchLadders(beginWord, endWord, list, map, result);
+        return result;
     }
-}    
-//     if(wordList == null){
-//         return 0;
-//         }
-//     if(beginWord.equals(endWord)){
-//          return 1;
-//          }   
-    
-//        HashSet<String> hash = new HashSet<String>();
-//        Queue<String> q = new LinkedList<String>();
-//        q.offer(beginWord);
-//        hash.add(beginWord);
-       
-//        int length = 1;
-//        while(!q.isEmpty()){
-//                  length++;
-//            int size = q.size();
-//            for(int i = 0; i < size; i++){
-//                 String tempWord = q.poll();
-//                 for(String nextWord: getNextWord(tempWord, wordList)){
-//                         if(hash.contains(nextWord)){
-//                             continue;
-//                         }
-//                         if(nextWord.equals(endWord)){
-//                             return length;
-//                         }
-//                     hash.add(nextWord);
-//                     q.offer(nextWord);
-//                }
-//            }
-            
-//        }
-//         return 0;
-//     }
-    
-//     private String replace(String s, int index, char c){
-//         char[] temp = s.toCharArray();
-//         temp[index] = c;
-//         return new String(temp);
-//     }
-    
-//     private ArrayList<String> getNextWord(String s, List<String> wordList){
-//         ArrayList<String> res = new ArrayList<>();
-//         for(char c = 'a'; c < 'z'; c++){
-//             for(int i = 0; i < s.length(); i++){
-//                 if(c == s.charAt(i)){
-//                     continue;
-//                 }
-//                 String nextWord = replace(s, i, c);
-//                 if(wordList.contains(nextWord)){
-//                     res.add(nextWord);
-//                 }
-//             }
-//         }       
-//         return res;
-//     }
-//}
+
+    // search from both beginWord and endWord
+    private boolean searchMap(Set<String> set1, Set<String> set2, Set<String> dict, Map<String, List<String>> map, boolean forward){
+        if( set1.size() > set2.size()){
+            return searchMap(set2, set1, dict, map, !forward);
+        }
+        if( set1.size() == 0)
+            return false;
+        
+        Set<String> newSet = new HashSet<>();
+        boolean found = false;
+        dict.removeAll(set1);
+        for( String curr : set1){
+            char[] arr = curr.toCharArray();
+            for( int j = 0; j < arr.length; j++){
+                char tmp = arr[j];
+                for( char c = 'a'; c<= 'z'; c++){
+                    if( c == tmp) continue;
+                    arr[j] = c;
+                    String next = new String(arr);
+                    if ( !dict.contains(next)) continue;
+                    newSet.add(next);
+                    
+                    String key = forward? curr : next;
+                    String val = forward? next : curr;
+                    map.putIfAbsent(key, new ArrayList<>());
+                    map.get(key).add(val);
+                    
+                    if( set2.contains(next))
+                        found = true;
+                }
+                arr[j] = tmp;
+            }
+        }
+        if( found)  return true;
+        return searchMap(newSet, set2, dict, map, forward);
+    }
+
+    private void searchLadders(String curr, String target, List<String> list, Map<String, List<String>> map, List<List<String>> result){
+        if( curr.equals(target)){
+            result.add(new ArrayList<>(list));
+            return;
+        }
+        if( !map.containsKey(curr))
+            return;
+        for( String next : map.get(curr)){
+            list.add(next);
+            searchLadders(next, target, list, map, result );
+            list.remove(list.size()-1);
+        }    
+    }
+}
