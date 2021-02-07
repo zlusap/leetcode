@@ -1,0 +1,45 @@
+class Solution {
+    //逐行摆放，因此需要 标记列、45度对角线和135度对角线
+    private char[][] board;
+    private boolean[] colUsed;
+    private boolean[] diagonals45Used;
+    private boolean[] diagonals135Used;
+    private int n;
+    private List<List<String>> ans;
+    public List<List<String>> solveNQueens(int n) {
+        this.ans = new ArrayList<>();
+        board = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(board[i], '.');
+        }
+        colUsed = new boolean[n];
+        diagonals45Used = new boolean[2 * n - 1];
+        diagonals135Used = new boolean[2 * n - 1];
+        this.n = n;
+        backtracking(0);
+        return ans;
+        
+    }
+    private void backtracking(int row) {
+        if (row == n) {
+            List<String> solution = new ArrayList<>();
+            for(char[] r : board) {
+                solution.add(new String(r));
+            }
+            ans.add(solution);
+            return;
+        }
+        for (int col = 0; col < n; col++) {
+            int diagonals45Idx = row + col;
+            int diagonals135Idx = n - 1 - (row - col);
+            if (diagonals45Used[diagonals45Idx] || diagonals135Used[diagonals135Idx] || colUsed[col]) {
+                continue;
+            }
+            board[row][col] = 'Q';
+            colUsed[col] = diagonals45Used[diagonals45Idx] = diagonals135Used[diagonals135Idx] = true;
+            backtracking(row + 1);
+            colUsed[col] = diagonals45Used[diagonals45Idx] = diagonals135Used[diagonals135Idx] = false;
+            board[row][col] = '.'; 
+        }
+    }
+}
