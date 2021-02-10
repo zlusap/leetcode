@@ -1,0 +1,31 @@
+class Solution {
+    public static List<List<Integer>> combinationSum(int[] candidates, int target) {
+       	Arrays.sort(candidates);
+        List<List<Integer>> results = new ArrayList<>();
+        dfs(candidates, 0, target, new ArrayList<Integer>(), results);
+        return results;
+    }
+
+    private static void dfs(int[] candidates, int start, int target, List<Integer> combination, List<List<Integer>> results) {//定义起始位置。
+        if (start == candidates.length) {
+            if (target == 0) {
+                results.add(new ArrayList<Integer>(combination));
+            }
+            return;
+        }
+
+        if (target < 0) {
+            return;
+        }
+
+        dfs(candidates, start + 1, target, combination, results);
+
+        if (start > 0 && candidates[start] == candidates[start - 1]) {//去重复。
+            return;
+        }
+
+        combination.add(candidates[start]);//把结果放进arraylist中
+        dfs(candidates, start, target - candidates[start], combination, results);//去掉已经进去arraylist中的
+        combination.remove(combination.size() - 1);//backtracking.去掉已经遍历过的。
+    }
+}
