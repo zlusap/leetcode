@@ -1,0 +1,21 @@
+public int countArrangement(int n) {
+        boolean[] visited = new boolean[n + 1];
+        
+        return dfs(1, visited, n);
+    }
+    
+    private int dfs(int pos, boolean[] visited, int n) {
+        if (pos > n) {
+            return 1;
+        }
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            if (!visited[i] && (i % pos == 0 || pos % i == 0)) {
+                visited[i] = true;
+                sum += dfs(pos + 1, visited, n);
+                visited[i] = false;
+            }
+        }
+        
+        return sum;
+    }
