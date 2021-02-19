@@ -1,0 +1,26 @@
+public class Solution {
+ //合并0-n的所有组合 全组合一边 backtracking
+    //pos是当前位置，curStr当前string count是？
+    // backtracking组合 对每个char 要他就加到当前位置，继续backtracking，不加就省略他 +省略的count
+    //走到最后加curStr，如果count大于0先把加起来curStr和count
+    public List<String> generateAbbreviations(String word) {
+        List<String> result = new ArrayList();
+        backtracking(result, word, 0, "", 0);
+        return result;
+    }
+    
+    public List<String> backtracking(List<String> result, String word, int pos, String curStr, int count) {
+        if (pos == word.length()) {
+            if (count > 0) curStr += count;
+            //System.out.println(curStr);
+            result.add(curStr);
+        } else {
+            //count在前面
+            backtracking(result, word, pos + 1, curStr, count + 1);
+            //count在中间 后面
+            if (count > 0) backtracking(result, word, pos + 1, curStr + count + word.charAt(pos), 0);
+            else backtracking(result, word, pos + 1, curStr + word.charAt(pos), 0);
+        }
+        return result;
+    }
+}
