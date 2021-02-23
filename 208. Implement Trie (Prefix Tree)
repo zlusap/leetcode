@@ -1,0 +1,50 @@
+class Trie {
+
+    private Node root;
+    /** Initialize your data structure here. */
+    public Trie() {
+         this.root = new Node();
+    }
+    
+    /** Inserts a word into the trie. */
+    public void insert(String word) {
+        Node cur=root;
+        for(int i=0;i<word.length();i++){
+            char c=word.charAt(i);
+            if(cur.next[c-'a']==null) cur.next[c-'a']=new Node();//no path exist, create the path
+            cur=cur.next[c-'a'];
+        }
+        cur.isWord=true;
+    }
+    
+    /** Returns if the word is in the trie. */
+    public boolean search(String word) {
+        Node cur=root;
+        for(int i=0;i<word.length();i++){
+            char c=word.charAt(i);
+            if(cur.next[c-'a']==null) return false;  //no path exist
+            cur=cur.next[c-'a'];
+        }
+        return cur.isWord;  //Path exists but not a word
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    public boolean startsWith(String prefix) {
+        Node cur=root;
+        for(int i=0;i<prefix.length();i++){
+            char c = prefix.charAt(i);
+            if(cur.next[c-'a']==null) return false;
+            cur=cur.next[c-'a'];
+        }
+        return true;
+    }
+}
+
+class Node{
+      boolean isWord;
+      Node[] next;   
+      public Node(){
+          next = new Node[26];  //all lowercase
+          isWord=false;
+      }
+}
