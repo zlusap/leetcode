@@ -1,0 +1,56 @@
+class WordFilter {
+    private TrieNode root;
+
+    public WordFilter(String[] words) {
+        root = new TrieNode();
+        // use weight to identify larger index when there are >= 1 words matching prefix and suffix
+        for (int weight = 0; weight < words.length; weight++) {
+             // add "apple{apple", "pple{apple", "ple{apple", "le{apple", "e{apple", "{apple" into the Trie
+            String word = "{" + words[weight];
+            insert(word, weight);
+            for (int i = 0; i < word.length(); i++) {
+                insert(word.substring(i + 1) + word, weight);
+            }
+        }
+    }
+    
+    public int f(String prefix, String suffix) {
+        TrieNode node = root;
+        for (char c : (suffix + "{" + prefix).toCharArray()) {
+            int k = c - 'a';
+            if (node.children[k] == null) {
+                return -1;
+            }
+            node = node.children[k];
+        }
+        return node.weight;
+    }
+    
+    private void insert(String s, int weight) {
+        TrieNode node = root;
+        for (char c : s.toCharArray()) {
+            int k = c - 'a';
+            if (node.children[k] == null) {
+                node.children[k] = new TrieNode();
+            }
+            node = node.children[k];
+            node.weight = weight;
+        }
+    }
+}
+
+class TrieNode {
+    TrieNode[] children;
+    int weight;
+    
+    TrieNode() {
+        children = new TrieNode[27]; // 'a' - 'z' and '{'. 'z' and '{' are neighbours in ASCII table
+        weight = 0;
+    }
+}
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
