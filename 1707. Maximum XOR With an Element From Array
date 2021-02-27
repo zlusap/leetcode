@@ -1,0 +1,61 @@
+class Solution {
+    
+    class Trie {
+        int val;
+        Trie[] children = new Trie[2];
+    }
+    
+    public int[] maximizeXor(int[] nums, int[][] queries) {
+        
+        Trie root = new Trie();
+        int[][] temp = new int[queries.length][3];
+        
+        int index = 0;
+        for (int[] query : queries) {
+            temp[index][0] = query[0];
+            temp[index][1] = query[1];
+            temp[index][2] = index++;
+        }
+        
+        Arrays.sort(nums);
+        Arrays.sort(temp, (a, b) -> a[1] - b[1]);
+        
+        int[] output = new int[queries.length];
+        index = 0;
+        
+        for (int[] query : temp) {
+            
+             
+            
+            /* Update the Trie with nums <= m */
+            while (index < nums.length && nums[index] <= query[1]) {
+                Trie cur = root;
+                for (int i = 31; i >= 0; i--) {
+                    int curBit = (nums[index] >> i) & 1;
+                    if (cur.children[curBit] == null)
+                        cur.children[curBit] = new Trie();
+                    cur = cur.children[curBit];
+                }
+                cur.val = nums[index++];
+            }
+            
+            if (index == 0) {
+                output[query[2]] = -1;
+                continue;
+            }
+            /* Find the max XOR for x */
+            Trie cur = root;
+            for (int i = 31; i >= 0; i--) {
+                
+                int curBit = (query[0] >> i) & 1;
+                if (cur.children[1 - curBit] != null)
+                    cur = cur.children[1 - curBit];
+                else
+                    cur = cur.children[curBit];
+            }
+            
+            output[query[2]] = cur.val ^ query[0];
+        }
+        return output;
+    }
+}
