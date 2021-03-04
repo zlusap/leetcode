@@ -1,0 +1,25 @@
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node parent;
+};
+*/
+
+class Solution {
+    public Node lowestCommonAncestor(Node p, Node q) {
+        //先求一下两个节点离树根的距离，然后让距离远的那个向上走若干步使得两个节点离树根距离相等，接着两个节点都向上齐头并进，直到相遇，相遇点就是LCA
+        //利用set来帮助我们把p和q之间关系联系起来。
+        Set<Node> path = new HashSet<>();
+        while(p != null) {
+            path.add(p);
+            p = p.parent;
+        }
+        while(!path.contains(q)) {
+            q = q.parent;
+        }
+        return q;
+    }
+}
