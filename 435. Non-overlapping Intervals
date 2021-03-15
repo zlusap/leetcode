@@ -1,0 +1,54 @@
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        if(intervals == null || intervals.length == 0) return 0;
+        Arrays.sort(intervals, (a,b)  ->{
+            if(a[0] != b[0]) return a[0] - b[0];
+            else return a[1] - b[1];
+        });//start不相等，按照start从小到大排列。若start相等，按照end从小到大排列。
+        int count = 0;
+        int[] prev = intervals[0];//start的数组
+      //  System.out.println(intervals[2][0]);
+        for (int i = 1; i < intervals.length; i++){
+            if (intervals[i][0] < prev[1]) {//start小于pre的start
+                count++;
+                if (intervals[i][1]< prev[1]) prev = intervals[i]; //更新start的位置当end<start的时候
+            }
+            else prev = intervals[i];
+    }
+        return count;
+        //         int start = Integer.MAX_VALUE;
+//         int end = Integer.MIN_VALUE;
+//         int count = 0;
+//         for (int i = 0; i < intervals.length; i++){
+//             boolean noChange = false;
+//             if (start < intervals[i][0] || end > intervals[i][1]) {
+//                 noChange = true;    
+//             }
+            
+//             if (noChange) {
+//                 count++;
+//             }
+//             else {
+//                 start = intervals[i][0];
+//                 end = intervals[i][1];
+//             }
+            
+            
+// //             if (start > intervals[i][0]) {
+// //                 start = intervals[i][0];
+// //                 noChange = true;
+// //             }
+// //             if (end < intervals[i][1]) {
+// //                 end = intervals[i][1];
+// //                 noChange = true;
+// //             }
+            
+// //             if (!noChange) count++;
+//         }
+        
+//         for (int i = 0; i < intervals.length; i++){
+//             System.out.println(intervals[i][0] + " " + intervals[i][1]);
+//         }
+//         return count;
+   }
+}
