@@ -1,0 +1,66 @@
+class Solution {
+    public List<Integer> minAvailableDuration(int[][] slots1, int[][] slots2, int duration) {
+        Arrays.sort(slots1, (a, b) -> a[0] - b[0]);
+        Arrays.sort(slots2, (a, b) -> a[0] - b[0]);
+
+        int pointer1 = 0, pointer2 = 0;
+
+        while (pointer1 < slots1.length && pointer2 < slots2.length) {
+            // find the boundaries of the intersection, or the common slot
+            int intersectLeft = Math.max(slots1[pointer1][0], slots2[pointer2][0]);
+            int intersectRight = Math.min(slots1[pointer1][1], slots2[pointer2][1]);
+            if (intersectRight - intersectLeft >= duration) {
+                return new ArrayList<Integer>(Arrays.asList(intersectLeft, intersectLeft + duration));
+            }
+            // always move the one that ends earlier
+            if (slots1[pointer1][1] < slots2[pointer2][1]) {
+                pointer1++;
+            } else {
+                pointer2++;
+            }
+        }
+        return new ArrayList<Integer>();
+        
+        /*这个方法更简洁
+        Arrays.sort(slots1, (var1, var2)->(var1[0] - var2[0]));
+        Arrays.sort(slots2, (var1, var2)->(var1[0] - var2[0]));
+        int i=0,j=0;
+        List<Integer> ret = new ArrayList();
+        while(i < slots1.length && j < slots2.length){
+            int left = Math.max(slots1[i][0], slots2[j][0]);
+            int right = Math.min(slots1[i][1], slots2[j][1]);
+            if(right - left >= duration){
+                ret.add(left);
+                ret.add(left + duration);
+                return ret;
+            }
+            if(slots1[i][1] < slots2[j][1]){
+                i++;
+            }else{
+                j++;
+            }
+        }
+        return ret;
+        */
+        
+        /*/PQ
+        PriorityQueue<int[]> timeslots = new PriorityQueue<>((slot1, slot2) -> slot1[0] - slot2[0]);
+
+        for (int[] slot: slots1) {
+            if (slot[1] - slot[0] >= duration) timeslots.offer(slot);
+        }
+        for (int[] slot: slots2) {
+            if (slot[1] - slot[0] >= duration) timeslots.offer(slot);
+        }
+
+        while (timeslots.size() > 1) {
+            int[] slot1 = timeslots.poll();
+            int[] slot2 = timeslots.peek();
+            if (slot1[1] >= slot2[0] + duration) {
+                return new ArrayList<Integer>(Arrays.asList(slot2[0], slot2[0] + duration));
+            }
+        }
+        return new ArrayList<Integer>();
+        */
+    }
+}
