@@ -1,0 +1,28 @@
+class Solution {
+    //sweepline + treemap
+    public List<List<Integer>> getSkyline(int[][] buildings) {
+     List<List<Integer>> res=new ArrayList<>();
+        List<int[]> points=new ArrayList<>();
+        for(int[] b:buildings){
+            points.add(new int[]{b[0],b[2],1}); // Left X,Height,1
+            points.add(new int[]{b[1],b[2],-1}); // Right X,Height,-1
+        }
+        Collections.sort(points,(a,b)->{
+            if(a[0]!=b[0]) return Integer.compare(a[0],b[0]);
+            else return Integer.compare(b[1]*b[2],a[1]*a[2]);
+        });
+        TreeMap<Integer,Integer> h=new TreeMap<>();
+        h.put(0,1);
+        for(int[] p:points){
+            if(p[2]==1){ // left edge needs to be the highest
+                if(p[1]>h.lastEntry().getKey()) res.add(Arrays.asList(p[0],p[1]));
+                h.put(p[1],h.getOrDefault(p[1],0)+1);
+            }else{ // right edge, remove current rectangle first and see what`s next biggest
+                h.put(p[1],h.get(p[1])-1);
+                if(h.get(p[1])==0)h.remove(p[1]);
+                if(p[1]>h.lastEntry().getKey()) res.add(Arrays.asList(p[0],h.lastEntry().getKey()));
+            }
+        }
+        return res;
+    }
+}
