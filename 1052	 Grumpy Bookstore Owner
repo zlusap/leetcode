@@ -1,0 +1,68 @@
+class Solution {
+    //Sliding window T:O(N) S:O(1) two pass
+    public int maxSatisfied(int[] customers, int[] grumpy, int X) {
+        int result = 0;
+        if(customers == null || customers.length==0 || grumpy==null || grumpy.length==0 || customers.length!=grumpy.length){
+            return result;
+        }
+        
+        int happyCustomers = 0;
+        for(int i=0; i<grumpy.length; i++){
+            if(grumpy[i]==0){
+                happyCustomers += customers[i];
+            }
+        }
+        result = happyCustomers;
+        
+        int start = 0;
+        int windowSum = 0;
+        for(int end =0; end<grumpy.length; end++){
+            if(grumpy[end] == 1){
+                windowSum += customers[end];
+            }
+            if(end-start+1 == X){//Window Size completed
+                result = Math.max(result, happyCustomers+windowSum);
+                //remove the window start value from windowSum ONLY IF that index contributed to window sum meaning if it was grumpy instance
+                if(grumpy[start] == 1){
+                    windowSum -= customers[start];
+                }
+                start++;//Contract the window start|Slide the window forward
+            }
+        }
+        
+        return result;
+    }
+    
+    
+//     //bruteforce T:O(N^2) S:O(1)
+//     public int maxSatisfied(int[] customers, int[] grumpy, int X) {
+//         int result = 0;
+//         if(customers == null || customers.length==0 || grumpy==null || grumpy.length==0 || customers.length!=grumpy.length){
+//             return result;
+//         }
+        
+//         int happyCustomers = 0;
+//         for(int i=0; i<grumpy.length; i++){
+//             if(grumpy[i]==0){
+//                 happyCustomers += customers[i];
+//             }
+//         }
+//         result = happyCustomers;
+        
+//         //use secret at all possible grumpy indices and update max result
+//         int count = 0;
+//         for(int i=0; i<grumpy.length; i++){
+//             if(grumpy[i] == 1){
+//                 for(int j=i; j<i+X && j<grumpy.length; j++){
+//                     if(grumpy[j] == 1){
+//                         count+=customers[j];
+//                     }
+//                 }
+//                 result = Math.max(result, happyCustomers+count);
+//             }
+//             count = 0; //reset
+//         }
+        
+//         return result;
+//     }
+}
