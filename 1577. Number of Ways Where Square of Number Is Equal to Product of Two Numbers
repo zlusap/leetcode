@@ -1,0 +1,21 @@
+class Solution {
+    public int numTriplets(int[] nums1, int[] nums2) {
+        int ans = helper(nums1, nums2)+helper(nums2, nums1);
+        return ans;
+    }
+    int helper(int[] squa, int[] pro){
+        Map<Long, Integer> map = new HashMap<>();
+        for(int num:squa){
+            long key = ((long) num)*num;
+            map.put(key, map.getOrDefault(key, 0)+1);
+        }
+        int ans = 0;
+        for(int j=0; j<pro.length; j++){
+            for(int k=j+1; k<pro.length; k++){
+                long key = ((long)pro[j])*pro[k];
+                ans += map.getOrDefault(key, 0);
+            }
+        }
+        return ans;
+    }
+}
