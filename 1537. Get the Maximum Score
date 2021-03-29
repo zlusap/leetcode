@@ -1,0 +1,34 @@
+class Solution {
+    public int maxSum(int[] nums1, int[] nums2) {
+    int MOD = (int)Math.pow(10, 9) + 7;
+        int i = 0;
+        int j = 0;
+        int len1 = nums1.length;
+        int len2 = nums2.length;
+        long sum1 = 0;
+        long sum2 = 0;
+        while (i < len1 && j < len2) {
+            if (nums1[i] == nums2[j]) {
+                // equal
+                sum1 = sum2 = (Math.max(sum1, sum2) + nums1[i]) % MOD;
+                i++;
+                j++;
+            } else if (nums1[i] < nums2[j]) {
+                sum1 += nums1[i];
+                i++;
+            } else {
+                sum2 += nums2[j];
+                j++;
+            }
+        }        
+        while (i < len1) {
+            sum1 = sum1 + nums1[i];
+            i++;
+        }
+        while (j < len2) {
+            sum2 = sum2 + nums2[j];
+            j++;
+        }
+        return (int)(Math.max(sum1, sum2) % MOD);
+    }
+}
