@@ -1,0 +1,54 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        HashMap<Integer,Integer> map = new HashMap<>();
+          for(int i =0; i < inorder.length;i++){
+             map.put(inorder[i],i);
+         }
+        return buildTree(inorder, 0,  inorder.length-1, postorder, 0, postorder.length-1,map);
+    }
+
+    //和preorder想反，postorder我们从后往前recurring。思路是一摸一样的。
+    private TreeNode buildTree(int[] inorder, int inStart, int inEnd, int[] postorder, int postStart, int postEnd,HashMap<Integer,Integer> map) { 
+        if (postStart < 0 || inStart > inEnd)
+            return null;
+
+        //The last element in postorder is the root.
+        TreeNode root = new TreeNode(postorder[postEnd]);
+
+        //find the index of the root from inorder. Iterating from the end.
+         //这里需要过一遍例子： 先找出根节点，然后找左子树，右子树的范围。从大到小的recursion题型。
+        //https://www.youtube.com/watch?v=6Xcz08RkRHE
+         /*
+            postorder: [9,15,7,20,3] 3是root
+            inorder: [9,3,15,20,7]   inorder左边是左子树，右边是右子树
+        */
+        int rootIndex = map.get(postorder[postEnd]);
+        //System.out.println(rootIndex);
+        
+        //build right and left subtrees. Again, scanning from the end to find the sections.
+        root.left = buildTree(inorder, 
+                              inStart,//0
+                              rootIndex - 1,//4 -1 = 3 
+                              postorder, 
+                              postStart,//0
+                              postStart + rootIndex - inStart - 1, //0 +2 - 0 - 1 = 1
+                              map);
+        root.right = buildTree(inorder, 
+                               rootIndex + 1,
+                               inEnd,
+                               postorder, 
+                               postStart + rootIndex - inStart,// 0+2-0 = 2 
+                               postEnd-1, //4-1 = 3
+                               map);
+        return root;
+    }
+}
