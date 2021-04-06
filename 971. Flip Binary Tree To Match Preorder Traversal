@@ -1,0 +1,47 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+         int index;
+    public List<Integer> flipMatchVoyage(TreeNode root, int[] voyage) {
+        List<Integer> rst = new ArrayList<Integer>();
+        if(root == null || voyage == null || voyage.length == 0)
+            return rst;
+        index = 0;
+        if(tranverse(root, voyage, rst))
+            return rst;
+        rst = new ArrayList<Integer>();
+        rst.add(-1);
+        return rst;
+    }
+    
+    private boolean tranverse(TreeNode node, int[] voyage, List<Integer> rst)
+    {
+        if(node == null)
+            return true;
+        if(node.val != voyage[index])
+            return false;
+        index ++;
+        if(node.left != null && node.left.val != voyage[index])
+        {
+            rst.add(node.val);
+            TreeNode left = node.left;
+            node.left = node.right;
+            node.right = left;
+        }
+        return tranverse(node.left, voyage, rst) && tranverse(node.right, voyage, rst); 
+         
+    }
+}
