@@ -1,0 +1,40 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode recoverFromPreorder(String S) {
+         int level, val;
+        Stack<TreeNode> stack = new Stack<>();
+        for (int i = 0; i < S.length() && i < S.length();) {
+            for (level = 0; S.charAt(i) == '-'; i++) {// level 向前
+                level++;
+            }
+            for (val = 0; i < S.length() && S.charAt(i) != '-'; i++) {//当前层的value
+                val = val * 10 + (S.charAt(i) - '0');
+            }
+            while (stack.size() > level) {//考虑树的深度。 level是2 1 1 2
+                stack.pop();
+                //System.out.println(val);// 4 5 5 4 
+            }
+            TreeNode node = new TreeNode(val);
+            if (!stack.isEmpty()) {
+                if (stack.peek().left == null) {
+                    stack.peek().left = node;
+                } else {
+                    stack.peek().right = node;
+                }
+            }
+            stack.add(node);
+        }
+        while (stack.size() > 1) {
+            stack.pop();
+        }
+        return stack.pop();
+    }
+}
