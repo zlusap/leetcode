@@ -1,0 +1,142 @@
+class LFUCache {
+
+    // The basic contents of the cache
+    class Node {
+        private int key;
+        private int value;
+        private int frequency;
+        private Node next;
+        private Node prev;
+        
+        Node(int key, int value) {
+            this.key = key;
+            this.value = value;
+            frequency = 1;
+        }
+    }
+    
+    // Double Linked List that hold the Nodes in LRU order
+    class DLList {
+        private Node head;
+        private Node tail;
+        private int size;
+        
+        DLList() {
+            head = new Node(-1, -1);
+            tail = new Node(-2, -2);
+            head.next = tail;
+            tail.prev = head;
+        }
+        
+        public void add(Node node) {
+            node.next = head.next;
+            node.prev = head;
+            head.next = node;
+            node.next.prev = node;
+            size++;
+        }
+        
+        public void remove(Node node) {
+            node.prev.next = node.next;
+            node.next.prev = node.prev;
+            size--;
+        }
+        
+        public Node removeTailNode() {
+            if (size > 0) {
+                Node temp = tail.prev;
+                remove(temp);
+                return temp;                
+            } else {
+                return null;
+            }
+
+        }
+    }
+    
+    // This map contains the Key to Node Mapping
+    private Map<Integer, Node> keyNodeMap;
+    // This map contains the Frequency to Double LinkedLink Mapping
+    private Map<Integer, DLList> frequencyDLListMap;
+    // The total capacity of the cache
+    private int capacity;
+    // The minimum frequency that maps to a Double LinkedList
+    private int minimumFrequency;
+    
+    public LFUCache(int capacity) {
+        this.capacity = capacity;
+        keyNodeMap = new HashMap<>();
+        frequencyDLListMap = new HashMap<>();
+    }
+    
+    public int get(int key) {
+        if (keyNodeMap.containsKey(key)) {
+            Node node = keyNodeMap.get(key);
+            update(node);
+            return node.value;
+        } else {
+            return -1;
+        }
+    }
+    
+    public void put(int key, int value) {
+        if (capacity == 0) {
+            return;
+        }
+        
+        // add node to cache
+        Node node;
+        
+        if (keyNodeMap.containsKey(key)) {
+            // update value
+            node = keyNodeMap.get(key);
+            node.value = value;
+            update(node);
+            return;
+        }
+        
+        if (keyNodeMap.size() >= capacity) {
+            // remove LFU node from cache
+            DLList oldList = frequencyDLListMap.get(minimumFrequency);
+            node = oldList.removeTailNode();
+            // remove node from Key Node map
+            keyNodeMap.remove(node.key);
+        }
+        
+        // add new Node to cache
+        // always set minimumFrequency to 1 when adding new node to cache
+        minimumFrequency = 1;
+        node = new Node(key, value);
+        // add node to key node map
+        keyNodeMap.put(key, node);
+        DLList newList = frequencyDLListMap.getOrDefault(node.frequency, new DLList());
+        newList.add(node);
+        frequencyDLListMap.put(node.frequency, newList);        
+    }
+    
+    private void update(Node node) {
+        
+        // get the list that contains the node
+        DLList oldList = frequencyDLListMap.get(node.frequency);
+        // remove the node from the old list
+        oldList.remove(node);
+        if(node.frequency == minimumFrequency && oldList.size == 0) {
+            minimumFrequency++;
+        }
+        // increment frequency count of node
+        node.frequency++;
+        
+        // insert node in next higher list or 
+        // create list if next higher list does not exist
+        DLList newList = frequencyDLListMap.getOrDefault(node.frequency, new DLList());
+        newList.add(node);
+        frequencyDLListMap.put(node.frequency, newList);
+    }
+}
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache obj = new LFUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
