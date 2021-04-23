@@ -1,0 +1,48 @@
+class Solution {
+    public List<Integer> countSmaller(int[] nums) {
+        int len = nums.length;
+        int[] counts = new int[len];
+        int[] index = new int[len];
+        for (int i = 0; i < len; i++) {
+            index[i] = i;
+        }
+        mergeSort(nums, index, 0, len - 1, counts);
+        List<Integer> res = new ArrayList<>();
+        for (int num: counts) {
+            res.add(num);
+        }
+        return res;
+    }
+    
+    private void mergeSort(int[] nums, int[] index, int start, int end, int[] counts) {
+        if (start >= end) return;
+        int mid = start + (end - start) / 2;
+        mergeSort(nums, index, start, mid, counts);
+        mergeSort(nums, index, mid + 1, end, counts);
+        merge(nums, index, start, mid, end, counts);
+    }
+    
+    private void merge(int[] nums, int[] index, int start, int mid, int end, int[] counts) {
+        int[] sorted = new int[end - start + 1];
+        for (int i = start; i <= end; i++) {
+            sorted[i - start] = index[i];
+        }
+        int i = 0, j = mid - start + 1, k = start;
+        while (i <= mid - start || j <= end - start) {
+            if (i > mid - start) {
+                index[k++] = sorted[j++];
+            } else if (j > end - start) {
+                index[k] = sorted[i++];
+                counts[index[k]] += end - mid;
+                k++;
+            } else if (nums[sorted[i]] <= nums[sorted[j]]) {
+                
+                index[k] = sorted[i++];
+                counts[index[k]] += j - (mid - start + 1);
+                k++;
+            } else {
+                index[k++] = sorted[j++];
+            }
+        }
+    }
+}
