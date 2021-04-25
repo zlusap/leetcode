@@ -1,0 +1,78 @@
+class Data {
+    int lessThanCnt = 0;
+    int greaterThanCnt = 0;
+    int val;
+    
+    public Data(int val) {
+        this.val = val;
+    }
+}
+
+class Solution {
+    public static final int MOD = (int)(1e9 + 7);
+    
+    public int createSortedArray(int[] instructions) {
+        int n = instructions.length;
+        Data[] A = new Data[n];
+        for (int i = 0; i < n; i++) {
+            A[i] = new Data(instructions[i]);
+        }
+        mergesort(A, 0, n - 1);
+        long res = 0;
+        for (Data x : A) {
+            res = (res + (long)Math.min(x.lessThanCnt, x.greaterThanCnt)) % MOD;
+        }
+        return (int)res;
+    }
+    
+    private void mergesort(Data[] A, int start, int end) {
+        if (start >= end) {
+            return;
+        }
+        int mid = start + (end - start) / 2;
+        mergesort(A, start, mid);
+        mergesort(A, mid + 1, end);
+        merge(A, start, mid, mid + 1, end);
+    }
+    
+    private void merge(Data[] A, int start1, int end1, int start2, int end2) {
+        int cur1 = start1;
+        int cur2 = start2;
+        List<Data> temp = new ArrayList<>();
+        while (cur1 <= end1 && cur2 <= end2) {
+            if (A[cur1].val < A[cur2].val) {
+                temp.add(A[cur1]);
+                cur1++;
+            }
+            else {
+                int lessThan = cur1 - start1;
+                while (cur1 <= end1 && A[cur1].val == A[cur2].val) {
+                    temp.add(A[cur1]);
+                    cur1++;
+                }
+                int greaterThan = end1 - cur1 + 1;
+                int val = A[cur2].val;
+                while (cur2 <= end2 && val == A[cur2].val) {
+                    A[cur2].lessThanCnt += lessThan;
+                    A[cur2].greaterThanCnt += greaterThan;
+                    temp.add(A[cur2]);
+                    cur2++;
+                }
+            }
+        }
+        while (cur1 <= end1) {
+            temp.add(A[cur1]);
+            cur1++;
+        }
+        while (cur2 <= end2) {
+            A[cur2].lessThanCnt += end1 - start1 + 1;
+            temp.add(A[cur2]);
+            cur2++;
+        }
+        int j = 0;
+        for (int i = start1; i <= end2; i++) {
+            A[i] = temp.get(j);
+            j++;
+        }
+    }
+}
