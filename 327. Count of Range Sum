@@ -1,0 +1,64 @@
+class Solution {
+
+     private int lower;
+    private int upper;
+    public int countRangeSum(int[] nums, int lower, int upper) {
+        if(nums == null || nums.length == 0 ) return 0;
+        int n = nums.length;
+        this.lower  = lower;
+        this.upper = upper;
+        long[] preSum = new long[n + 1];
+        for(int i = 0; i < n; i++){
+            preSum[i + 1] = preSum[i] + nums[i];
+        }
+        return countRangeSum(preSum, 0, n);
+    }
+    
+    public int countRangeSum(long[] preSum, int l, int r){
+        if(r <= l) return 0;
+        int m = l + (r - l) / 2;
+        int left = countRangeSum(preSum, l, m);
+        int right = countRangeSum(preSum, m + 1, r);
+        return left + right + merge(preSum, l, m, r);
+    }
+    
+    public int merge(long[] preSum, int l , int m, int r){
+        int i = l;
+        int jl = m + 1;
+        int jr = m + 1;
+        int count = 0;
+        while(i <= m){
+            while(jl <= r && preSum[jl] < preSum[i] + lower){
+                jl++;
+            }
+            while(jr <= r && preSum[jr] <= preSum[i] + upper){
+                jr++;
+            }
+            count += jr - jl;
+            i++;
+        }
+        i = l;
+        int j = m + 1;
+        int k = 0;
+        long[] temp = new long[r - l + 1];
+        while(i <= m && j <= r){
+            if(preSum[i] < preSum[j]){
+                temp[k++] = preSum[i++];
+            }else{
+                temp[k++] = preSum[j++];
+            }
+        }
+        while(i <= m){
+            temp[k++] = preSum[i++];
+        }
+        while(j <= r){
+            temp[k++] = preSum[j++];
+        }
+        k = 0;
+        for(int x = l; x <= r; x++){
+            preSum[x] = temp[k++];
+        }
+        return count;
+    }
+
+}
