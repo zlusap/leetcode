@@ -1,0 +1,44 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+// 用一个hashmap记录map和它的frequency (这道题要求所有路径，所以要记录frequency)
+// 在dfs的过程中，维持一个current的变量，叠加本条路径的path sum
+// 如果在某个点上current - target的差已经存在hashmap里了，就累计hashmap里的frequency
+// 继续往左往右traverse下去
+// backtrack:
+// 完成了一个点的traverse就把current的frequency减1.
+class Solution {
+    int num = 0;
+    public int pathSum(TreeNode root, int sum) {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(0, 1);
+        dfs(root, 0, map, sum);
+        return num;
+    }
+    private void dfs(TreeNode root, int currSum, HashMap<Integer,Integer> map, int target){
+        if(root == null){
+            return;
+        }
+       currSum += root.val;
+       if(map.containsKey(currSum - target)){
+           num += map.get(currSum - target);
+       }
+       if(!map.containsKey(currSum)){
+           map.put(currSum,1);     
+       }else{
+           map.put(currSum,map.get(currSum) + 1);
+       }
+        
+        dfs(root.left, currSum, map, target);
+        dfs(root.right, currSum, map, target);
+        //backtracking
+        map.put(currSum, map.get(currSum) - 1 ); 
+    }
+    
+}
