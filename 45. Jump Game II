@@ -1,0 +1,17 @@
+class Solution {
+    public int jump(int[] nums) {
+     int currentjump =0;
+     int nextjump = 0;
+     int jumps=0;
+        if (nums ==null || nums.length < 2)
+            return 0;
+     for (int i = 0; i < nums.length - 1; i++){
+         currentjump = Math.max(currentjump,i+nums[i]);
+         if ( i == nextjump){
+             jumps++;
+             nextjump =currentjump;
+         }
+     }
+        return jumps;
+    }
+}
