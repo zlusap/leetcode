@@ -1,0 +1,20 @@
+class Solution {
+    public boolean canJump(int[] nums) {
+       // if(nums == null || nums.length==0) return true;
+        // int maxLocation = 0;
+        // for(int i = 0; i < nums.length; i++ ){
+        //     if(maxLocation < i) return false;
+        //     else if(maxLocation >= nums.length -1) return true;
+        //     maxLocation = Math.max(maxLocation, i+ nums[i]);
+        // }
+        // return true;
+        //   //https://www.youtube.com/watch?v=Zb4eRjuPHbM
+        int lastpos = nums.length -1;
+        for(int i = nums.length - 1; i >= 0; i--){
+            if(i + nums[i] >= lastpos){
+                lastpos = i;
+            }
+        }
+        return lastpos == 0; //过一遍例子，从后往前排列[2,3,1,1,4]
+    }
+}
