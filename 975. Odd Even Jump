@@ -1,0 +1,31 @@
+class Solution {
+    public int oddEvenJumps(int[] A) {
+        boolean[] odds = new boolean[A.length];
+        boolean[] evens = new boolean[A.length];
+        
+        odds[A.length - 1] = true;
+        evens[A.length - 1] = true;
+        
+        TreeMap<Integer, Integer> sorted = new TreeMap<>();
+        sorted.put(A[A.length - 1], A.length - 1);
+        int goodStarts = 1;
+        
+        for (int i = A.length - 2; i >= 0; i--) {
+            int el = A[i];
+            Map.Entry<Integer, Integer> odd = sorted.ceilingEntry(el);
+            if (odd != null) {
+                odds[i] = evens[odd.getValue()];
+            }
+            
+            Map.Entry<Integer, Integer> even = sorted.floorEntry(el);
+            if (even != null) {
+                evens[i] = odds[even.getValue()];
+            }
+            if (odds[i]) goodStarts++;
+            
+            sorted.put(el, i);
+        }
+        
+        return goodStarts;
+    }
+}
