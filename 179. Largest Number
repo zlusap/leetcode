@@ -1,0 +1,59 @@
+//class Solution {
+//     public String largestNumber(int[] nums) {
+//         if(nums == null || nums.length == 0)
+// 		    return "";
+		
+// 		// Convert int array to String array, so we can sort later on
+// 		String[] s_num = new String[nums.length];
+// 		for(int i = 0; i < nums.length; i++)
+// 		    s_num[i] = String.valueOf(nums[i]);
+			
+// 		// Comparator to decide which string should come first in concatenation
+// 		Comparator<String> comp = new Comparator<String>(){
+// 		    @Override
+// 		    public int compare(String str1, String str2){
+// 		        String s1 = str1 + str2;
+// 			String s2 = str2 + str1;
+// 			return s2.compareTo(s1); // reverse order here, so we can do append() later大到小
+// 		    }
+// 	        };
+		
+// 		Arrays.sort(s_num, comp);
+//                 // An extreme edge case by lc, say you have only a bunch of 0 in your int array
+//                 if(s_num[0].charAt(0) == '0')
+//                     return "0";
+            
+// 		StringBuilder sb = new StringBuilder();
+// 		for(String s: s_num)
+// 	            sb.append(s);
+		
+// 		return sb.toString();
+//     }
+class StringComparator implements Comparator<String> { // Comparator to decide which string should come first in concatenation
+    public int compare(String a, String b) {
+        if (a.length() == b.length()) {
+            return b.compareTo(a);
+        } else {
+            String ab = a + b;
+            String ba = b + a;
+            return ba.compareTo(ab);// reverse order here, so we can do append() later大到小
+        }
+    }
+}
+
+public class Solution {
+    public String largestNumber(int[] num) {
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> numstrings = new ArrayList<String>();
+        
+        for (int i : num) numstrings.add(String.valueOf(i));
+        Collections.sort(numstrings,  new StringComparator());//按照从大到小sort一下
+        
+        for (String s : numstrings) sb.append(s);
+        
+        String res = sb.toString();
+        if (res.length() > 0 && res.charAt(0) == '0') return "0";//边界条件
+        
+        return res;
+    }
+}
