@@ -1,0 +1,35 @@
+'''
+Bucket capacity max(1, (max_n - min_n)//(len(nums)-1)). So it's less or equal to the gap of uniform distribution. len(n)-1 is the number of gaps
+Number of Buckets to hold all numbers is B_cnt = (max_n - min_n)//B + 1
+Time: O(n)
+Space: O(n)
+'''
+class Solution:
+    def maximumGap(self, nums: List[int]) -> int:
+        if not nums or len(nums) < 2:
+            return 0
+        
+        max_n = max(nums)
+        min_n = min(nums)
+        B_size = max(1, (max_n - min_n)//(len(nums)-1))
+        B_cnt = (max_n - min_n)//B_size + 1
+        B_list = [None]*B_cnt
+        for n in nums:
+            idx = (n - min_n)//B_size
+            if B_list[idx] == None:
+                B_list[idx] = (n, n)
+            else:
+                if n < B_list[idx][0]:
+                    B_list[idx] = (n, B_list[idx][1])
+                elif n > B_list[idx][1]:
+                    B_list[idx] = (B_list[idx][0], n)
+        #print(B_list)
+        max_gap = 0
+        preBucketMax = min_n
+        for bucket in B_list:
+            if bucket == None:
+                continue
+            max_gap = max(max_gap, bucket[0] - preBucketMax)
+            preBucketMax = bucket[1]
+           
+        return max_gap
