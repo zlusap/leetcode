@@ -1,0 +1,22 @@
+class Solution {
+    public int longestValidParentheses(String s) {
+         int maxValue = 0;
+         Stack<Integer > stack = new Stack<>();//输入的值是index
+         stack.push(-1);//dummy value
+        for(int i = 0; i <s.length();i++){
+            if(s.charAt(i) == '('){
+                stack.push(i);//0,1
+            }else {
+                stack.pop();//pop出来1只剩下0
+                if(stack.empty()){
+                    stack.push(i);//非空
+                }else {
+                    maxValue = Math.max(maxValue, i - stack.peek());//2 - 0 就是此时的值。
+                }
+            }
+        }
+        return maxValue;
+    }
+}
+
+
