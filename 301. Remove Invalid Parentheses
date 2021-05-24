@@ -1,0 +1,45 @@
+class Solution:
+    def removeInvalidParentheses(self, s: str) -> List[str]:
+        l,r=0,0
+        self.res=[]
+        for c in s:
+            if c=='(':
+                l+=1
+            elif c==')':
+                if l==0:
+                    r+=1
+                else:
+                    l-=1
+        self.DFS(s,0,l,r)
+        return self.res
+    
+    def isValid(self,s):
+        left=0
+        for c in s:
+            if c=='(':
+                left+=1
+            elif c==')':
+                left-=1
+            if left<0:
+                return False
+        return left==0
+    
+    def DFS(self,s,start,l,r):
+        if l==0 and r==0:
+            if self.isValid(s):
+                self.res.append(s)
+            return
+        for i in range(start,len(s)):
+            if i!=start and s[i]==s[i-1]:
+                continue
+            if r>0 and s[i]==')':
+                self.DFS(s[:i]+s[i+1:],i,l,r-1)
+            if l>0 and s[i]=='(':
+                self.DFS(s[:i]+s[i+1:],i,l-1,r)
+#https://www.youtube.com/watch?v=2k_rS_u6EBk
+#https://blog.csdn.net/Yingtong819/article/details/99282492
+#首先统计多余的半个左或者右括号的数量l和r，要么都为0；要么一个大于0一个等于0；要么两个都大于0（这种情况肯定是有一个右括号在最前面）（这样统计的前提是去掉多余的，剩下的确实能左右对应上）
+#isValid函数与上一个解法一致
+#递归函数：如果l和r都是0，则说明此时左右括号数目相等，检查是否valid，正确的话加入结果res中；如果l和r还不是0，则从start开始遍历，删除多余的半括号，并继续调用递归函数
+#防止重复的结果的方法：对于多个连续的相同的半括号只删除第一个，每次要删除时与上一个字符比较，如果相同则直接跳过不考虑，不相同则说明是第一个半括号
+#防止大量重复计算的方法：每次递归开始的位置为start而不是从头开始
