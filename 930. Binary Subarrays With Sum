@@ -1,0 +1,41 @@
+class Solution:
+    def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:
+        '''
+        
+        
+        1,0,1,0,1
+        1 1 2 2 3
+                i
+        map of prefixsum with count 
+        map[0]=1
+        if my prefixsum==goal then count++
+        
+        
+        is there a subarray of prefixsum - goal 
+        
+        
+        
+        
+        [0,0,0,0,0]
+        
+        0 0 0 0 0
+          0
+        '''
+        
+        
+        map1={}
+        map1[0]=1
+        prefixsum=0
+        count=0
+        for i in range(0 , len(nums)):
+            prefixsum+=nums[i]
+            if(prefixsum>=goal):
+                if((prefixsum-goal in map1)):
+                    count+=map1[prefixsum-goal]
+                    
+            if(prefixsum in map1):
+                map1[prefixsum]+=1
+            else:
+                map1[prefixsum]=1   
+            
+        return count   
