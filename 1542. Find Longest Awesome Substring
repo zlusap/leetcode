@@ -1,0 +1,15 @@
+class Solution:
+    def longestAwesome(self, s: str) -> int:
+        mask, ans = 0,0
+        pos = {0: -1}
+        for i, d in enumerate(s):
+            mask ^= 1<<(int(d))
+            for j in range(10):
+                candidate = mask^(1<<j)
+                if candidate in pos:
+                    ans = max(ans, i - pos[candidate])
+            if mask not in pos:
+                pos[mask] = i
+            ans = max(ans, i - pos[mask])
+
+        return ans
