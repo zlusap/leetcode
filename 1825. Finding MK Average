@@ -1,0 +1,21 @@
+from sortedcontainers import SortedList
+class MKAverage:
+
+    def __init__(self, m: int, k: int):
+        self.m = m
+        self.k = k
+        self.arr = collections.deque()
+        self.mid = SortedList()
+
+    def addElement(self, num: int) -> None:
+        if len(self.arr)>=self.m:
+            x = self.arr.popleft()
+            self.mid.remove(x)
+        self.arr.append(num)
+        self.mid.add(num)
+
+    def calculateMKAverage(self) -> int:
+        if len(self.mid)<self.m:
+            return -1
+        ave_container = self.mid[self.k:-self.k]
+        return sum(ave_container)//len(ave_container)
