@@ -1,0 +1,21 @@
+from heapq import heappush, heappop
+class Solution:
+    def smallestRange(self, nums: List[List[int]]) -> List[int]:
+        pq = []
+        windowMax = float('-inf')
+        for i, row in enumerate(nums):
+            windowMax = max(windowMax, row[0])
+            heappush(pq, (row[0], i, 0)) # i is the row, j is the index in this row
+        windowMin = pq[0][0]
+        resMin = windowMin
+        resMax = windowMax
+        while True:
+            (minVal, i, j) = heappop(pq)
+            if j + 1 == len(nums[i]):
+                break;
+            heappush(pq, (nums[i][j+1], i, j+1))
+            windowMax = max(windowMax, nums[i][j+1])
+            windowMin = pq[0][0]
+            if windowMax - windowMin < resMax - resMin:
+                resMax, resMin = windowMax, windowMin
+        return [resMin, resMax]
