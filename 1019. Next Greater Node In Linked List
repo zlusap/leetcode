@@ -1,0 +1,34 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int[] nextLargerNodes(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode p = dummy;
+        ArrayList<Integer> arr = new ArrayList<>();
+        while( p != null && p.next != null){
+            p = p.next;
+            arr.add(p.val);
+        }
+        int[] res = new int[arr.size()]; 
+    
+        //这段是核心：可以查看503题。他们是相通的。
+        //利用单调栈来做。
+        Stack<Integer> stack = new Stack<>();//stack存的是index值。
+        Arrays.fill(res,0);//先把所有list的值赋成0；
+        for(int i = 0; i < arr.size();i++){
+            while(!stack.isEmpty() && arr.get(stack.peek()) < arr.get(i)){//一旦不是单调递减了我们就要把这个值赋成比他大的后面的值。
+                int temp = stack.pop();
+                res[temp] = arr.get(i);
+            }
+            stack.push(i);
+        }
+        return res;
+    }   
+}
