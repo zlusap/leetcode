@@ -1,0 +1,28 @@
+class Solution {
+    public int minOperations(int[] nums1, int[] nums2) {
+          //21 10
+        //1,6--->5
+        //2,5--->1,4
+        //3,4--->2,3
+        if(nums1.length > 6*nums2.length || nums2.length > 6*nums1.length) return -1;
+        int sum1 = 0,sum2 = 0;
+        for(int i:nums1) sum1 += i;
+        for(int i:nums2) sum2 += i;
+        if(sum1 > sum2) return minOperations(nums2,nums1);
+        int[] dic = new int[6];
+        for(int i:nums1) dic[6-i]++;
+        for(int i:nums2) dic[i-1]++;
+            
+        int ops = 0,i = 5;
+        while(sum1 < sum2){
+            if(i < 0) break;
+            while(dic[i] == 0){
+                i--;
+            }
+            sum1 += i;
+            dic[i]--;
+            ops++;
+        }
+        return ops;
+    }
+}
