@@ -1,0 +1,34 @@
+class Solution {
+    public int[] productExceptSelf(int[] nums) {//拆成两部分去看i前，还有以后的数，然后再相乘。
+        int n = nums.length;
+        int[] res = new int[n];
+        int[] fwd = new int[n], bwd = new int[n];
+        fwd[0] = 1; bwd[n - 1] = 1;//初始化时1
+        //DP的想法
+        for (int i = 1; i < n; ++i) {
+            fwd[i] = fwd[i - 1] * nums[i - 1];//i之前的数
+        }
+        for (int i = n - 2; i >= 0; --i) {
+            bwd[i] = bwd[i + 1] * nums[i + 1];////i之后的数
+        }
+        for (int i = 0; i < n; ++i) {
+            res[i] = fwd[i] * bwd[i];
+        }
+        return res;
+    }
+    /*求出整个数组和积
+然后对与每个数的答案，就是这个数组的积除以这个数
+    int n = nums.length;
+        int[] res = new int[n];
+        res[0] = 1;
+        for (int i = 1; i < n; i++) {
+            res[i] = res[i - 1] * nums[i - 1];
+        }
+        int right = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            res[i] *= right;
+            right *= nums[i];
+        }
+        return res;
+        */
+}
