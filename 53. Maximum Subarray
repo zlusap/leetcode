@@ -1,0 +1,28 @@
+class Solution {
+    public int maxSubArray(int[] nums) {
+        // //Kadane's Algorithm to Maximum Sum Subarray Problem,贪心算法不好
+        // int max = Integer.MIN_VALUE, sum = 0;
+        // for(int i = 0;i < nums.length; i++){
+        //     sum += nums[i];
+        //     if(sum > max){
+        //         max = sum;
+        //     }
+        //     if(sum < 0){
+        //         sum = 0;
+        //     }
+        // }
+        //     return max;
+        //利用prefix sum 来算
+        int ans = Integer.MIN_VALUE, min = 0, sum = 0;
+        for(int i = 0; i < nums.length; i++){
+            sum += nums[i];//prefix sum
+            ans = Math.max(ans, sum - min);
+            min = Math.min(min,sum);
+            //System.out.println(min);             -2,-2,-4,-4,-4,-4,-4,-4,-4
+            //System.out.println(sum);//prefix sum -2,-1,-4, 0,-1, 1, 2,-3, 1
+            //sum - min的最大值就是答案
+        }
+        return ans;
+    }
+}
+
